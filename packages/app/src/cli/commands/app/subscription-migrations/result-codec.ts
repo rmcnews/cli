@@ -1,12 +1,13 @@
 import {
   migrationCancellationJsonOutputSchema,
+  migrationSubmissionJsonOutputSchema,
   type MigrationCancellationResult,
+  type MigrationSubmissionResult,
 } from '../../../services/subscription-migrations/types.js'
 import {
   projectMigrationOperation,
   projectMigrationUserErrors,
 } from '../../../services/subscription-migrations/result-codec.js'
-import type {MigrationSubmissionResult} from '../../../services/subscription-migrations/submit-migration-plan.js'
 
 export function encodeMigrationSubmissionResult(result: MigrationSubmissionResult): string {
   const document =
@@ -16,7 +17,7 @@ export function encodeMigrationSubmissionResult(result: MigrationSubmissionResul
           ...result.submission,
           failure: result.failure,
         }
-  return JSON.stringify(document, null, 2)
+  return migrationSubmissionJsonOutputSchema.encode(document)
 }
 
 export function encodeMigrationCancellationResult(result: MigrationCancellationResult): string {

@@ -36,7 +36,6 @@ const commandExceptions = [
   'packages/cli/src/cli/commands/auth/logout.ts',
   'packages/cli/src/cli/commands/doc/fetch.ts',
   'packages/cli/src/cli/commands/doc/search.ts',
-  'packages/cli/src/cli/commands/upgrade.ts',
   'packages/plugin-did-you-mean/src/commands/config/autocorrect/off.ts',
   'packages/plugin-did-you-mean/src/commands/config/autocorrect/on.ts',
   'packages/plugin-did-you-mean/src/commands/config/autocorrect/status.ts',

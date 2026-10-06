@@ -9707,7 +9707,7 @@ Upgrades Shopify CLI.
 
 ```
 USAGE
-  $ shopify upgrade [-j] [--json-schema] [--no-color] [--verbose]
+  $ shopify upgrade [-j] [--json-schema] [--no-color] [--no-input] [--verbose]
 
 FLAGS
   -j, --json
@@ -9722,6 +9722,10 @@ FLAGS
       Disable color output.
       [env: SHOPIFY_FLAG_NO_COLOR]
 
+  --no-input
+      Disable interactive prompts and browser authentication.
+      [env: SHOPIFY_FLAG_NO_INPUT]
+
   --verbose
       Increase the verbosity of the output. May include sensitive data.
       [env: SHOPIFY_FLAG_VERBOSE]
@@ -9731,9 +9735,9 @@ DESCRIPTION
 
   Upgrades Shopify CLI using your package manager.
 
-  Output from `--json` conforms to the `UpgradeResult` schema.
-
   Use `--json-schema` to print the result, error, and event schemas.
+
+  Output from `--json` conforms to the `UpgradeResult` schema.
 
   ```json
   {
@@ -9743,24 +9747,38 @@ DESCRIPTION
         "properties": {
           "status": {
             "type": "string",
-            "const": "upgraded"
+            "const": "success"
+          },
+          "changed": {
+            "type": "boolean",
+            "description": "Whether the verified installed version differs from previousVersion."
           },
           "scope": {
             "type": "string",
             "const": "global"
           },
           "previousVersion": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "version": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "packageManager": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "npm",
+              "pnpm",
+              "yarn",
+              "bun",
+              "homebrew"
+            ]
           }
         },
         "required": [
           "status",
+          "changed",
           "scope",
           "previousVersion",
           "version",
@@ -9773,7 +9791,11 @@ DESCRIPTION
         "properties": {
           "status": {
             "type": "string",
-            "const": "dependencies_updated"
+            "const": "success"
+          },
+          "changed": {
+            "type": "null",
+            "description": "Null because local dependency changes and installed versions are not verified."
           },
           "scope": {
             "type": "string",
@@ -9783,23 +9805,36 @@ DESCRIPTION
             "type": "string"
           },
           "previousVersion": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "availableVersion": {
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The available registry version, or null when unknown."
           },
           "packages": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "string",
+              "minLength": 1
             }
           }
         },
         "required": [
           "status",
+          "changed",
           "scope",
           "directory",
           "previousVersion",
+          "availableVersion",
           "packages"
         ],
         "additionalProperties": false
@@ -9815,8 +9850,8 @@ DESCRIPTION
             "type": "string",
             "enum": [
               "development",
-              "local_autoupgrade",
-              "dependency_not_found"
+              "local-autoupgrade",
+              "dependency-not-found"
             ]
           },
           "scope": {
